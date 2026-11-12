@@ -115,6 +115,7 @@ details p{margin:8px 0 0;font-size:14px;font-weight:500;color:var(--sub)}
 <label for="nm">名前</label><input id="nm" maxlength="8" placeholder="例：たなか">
 <button id="mkb">部屋を作る（ホスト）</button>
 <p class="sub" style="text-align:center;margin:8px 0 0">ホストは画面を閉じないでください</p>
+<button class="alt" id="solob">1人でCPUと遊ぶ</button>
 <hr class="hr">
 <label for="cin">部屋の番号（4桁）</label><input id="cin" inputmode="numeric" maxlength="4" placeholder="1234">
 <button class="alt" id="jnb">入室する</button>
@@ -125,6 +126,7 @@ details p{margin:8px 0 0;font-size:14px;font-weight:500;color:var(--sub)}
 <details><summary>何人で遊べますか？</summary><p>3〜8人です。6人以上だと、うらぎり者が2人になります。</p></details>
 <details><summary>ホストが画面を閉じたら？</summary><p>ゲームは終わります。ホストは、閉じたりスリープしたりしないようにしてください。</p></details>
 <details><summary>入室できないときは？</summary><p>番号が合っているか確認してください。LINEなどのアプリ内ではなく、SafariやChromeで開くのがおすすめです。ゲームが始まった後は入室できません。</p></details>
+<details><summary>1人でも遊べますか？</summary><p>「1人でCPUと遊ぶ」で、CPU4人と対戦できます。通信は使いません。部屋を作ったあとも、ロビーでCPUを追加できます。</p></details>
 <details><summary>操作方法は？</summary><p>スマホは画面の左側をドラッグして移動します。PCはWASDか矢印キーです。</p></details>
 <p class="sub" style="text-align:center;margin:28px 0 12px">基地の裏切り者</p>
 </div>
@@ -134,6 +136,7 @@ details p{margin:8px 0 0;font-size:14px;font-weight:500;color:var(--sub)}
 <div class="code" id="code">----</div>
 <div class="card"><div id="plist"></div></div>
 <p class="sub" id="wait"></p>
+<div id="cpus" style="display:none"><button class="alt" id="addcpu">CPUを追加</button><button class="alt" id="delcpu">CPUを1人減らす</button></div>
 <button id="start" style="display:none">ゲーム開始</button>
 </div>
 
@@ -177,14 +180,14 @@ const kn=e=>e.key.length===1?e.key.toLowerCase():e.key;
 addEventListener('keydown',e=>key[kn(e)]=1);addEventListener('keyup',e=>key[kn(e)]=0);
 
 /* ---------- ホスト(審判) ---------- */
-const mk=(n,c)=>({n,x:600,y:200,alive:true,role:'crew',conn:c,dx:0,dy:0,vote:null,cd:0,tk:[],dn:[],em:0});
+const mk=(n,c)=>({n,x:600,y:200,alive:true,role:'crew',conn:c,dx:0,dy:0,vote:null,cd:0,tk:[],dn:[],em:0,bot:0,path:null,work:0,goal:-1,bt:0});
 const sendAll=m=>pl.forEach(p=>p.conn&&p.conn.open&&p.conn.send(m));
 function hostRoom(){
   if(typeof Peer==='undefined'){alert('通信部品（PeerJS）を読み込めませんでした。アプリ内のプレビューではなく、ネット上に置いたURLで開いてください。');return}
   if(peer)peer.destroy();
   isHost=true;const code=String(1000+Math.random()*9000|0);
   peer=new Peer('kichi-'+code);
-  peer.on('open',()=>{$('code').textContent=code;pl=[mk($('nm').value.trim()||'ホスト',null)];me=0;lobbyMsg();setInterval(tick,50)});
+  peer.on('open',()=>{$('code').textContent=code;pl=[mk($('nm').value.trim()||'ホスト',null)];me=0;lobbyMsg();startTick()});
   peer.on('error',e=>{if(e.type==='unavailable-id')hostRoom();else alert('接続エラー：'+e.type)});
   peer.on('connection',c=>{c.on('data',d=>hd(c,d));c.on('close',()=>drop(c))});
 }
@@ -210,7 +213,7 @@ function drop(c){
   const i=pl.findIndex(p=>p.conn===c);if(i<0)return;
   if(hph==='lobby'){pl.splice(i,1);lobbyMsg()}else{pl[i].alive=false;pl[i].conn=null;pl[i].vote=null}
 }
-function place(){pl.forEach((p,i)=>{const a=i/pl.length*6.283;p.x=600+Math.cos(a)*70;p.y=190+Math.sin(a)*60;p.dx=p.dy=0})}
+function place(){pl.forEach((p,i)=>{const a=i/pl.length*6.283;p.x=600+Math.cos(a)*70;p.y=190+Math.sin(a)*60;p.dx=p.dy=0;p.path=null;p.work=0})}
 function startGame(){
   const k=pl.length>=6?2:1,ix=pl.map((_,i)=>i).sort(()=>Math.random()-.5);
   pl.forEach(p=>{p.role='crew';p.alive=true;p.vote=null;p.cd=5;p.dn=[];p.em=0;p.tk=[0,1,2,3,4,5,6,7].sort(()=>Math.random()-.5).slice(0,3)});
@@ -228,7 +231,7 @@ function doKill(i){
   if(b===null)return;
   pl[b].alive=false;bodies.push([Math.round(pl[b].x),Math.round(pl[b].y),b]);p.cd=8;
 }
-function startMeet(m){hph='meet';tm=40;bodies=[];pl.forEach(q=>q.vote=null);place();msg=m;msgT=3}
+function startMeet(m){hph='meet';tm=40;bodies=[];pl.forEach(q=>{q.vote=null;q.bt=3+Math.random()*9});place();msg=m;msgT=3}
 function doRep(i){
   const p=pl[i];if(hph!=='play'||!p||!p.alive)return;
   if(!bodies.some(b=>Math.hypot(b[0]-p.x,b[1]-p.y)<90))return;
@@ -265,6 +268,7 @@ function tick(){
   const dt=.05;
   if(uiPh==='game'){const v=inp();pl[0].dx=v.x;pl[0].dy=v.y}
   if(hph==='play'){
+    pl.forEach((p,i)=>{if(p.bot)botAI(p,i,dt)});
     pl.forEach(p=>{
       const l=Math.hypot(p.dx,p.dy);
       if(l>0){
@@ -277,12 +281,60 @@ function tick(){
     if(win())return;
   }else if(hph==='meet'){
     tm-=dt;
+    pl.forEach(p=>{if(p.bot&&p.alive&&p.vote===null&&40-tm>=p.bt)botVote(p)});
     if(tm<=0||pl.filter(p=>p.alive).every(p=>p.vote!==null))endMeet();
     if(hph==='end')return;
   }
   if(msgT>0)msgT-=dt;
   const s={t:'s',ph:hph,ps:pl.map(p=>[Math.round(p.x),Math.round(p.y),p.alive?1:0]),bd:bodies,pg:ttot?tdone/ttot:0,tm:Math.ceil(tm),cd:pl.map(p=>Math.ceil(p.cd)),msg:msgT>0?msg:''};
   sendAll(s);apply(s);
+}
+/* ---------- CPU ---------- */
+const NODES=[[160,140],[600,140],[1040,140],[160,640],[600,640],[1040,640]];
+const ADJ=[[1,3],[0,2,4],[1,5],[0,4],[1,3,5],[2,4]];
+const SN=[0,0,1,1,2,3,4,5];
+function route(x,y,s){
+  let a=0;NODES.forEach((n,i)=>{if(Math.hypot(n[0]-x,n[1]-y)<Math.hypot(NODES[a][0]-x,NODES[a][1]-y))a=i});
+  const g=SN[s],prev={[a]:-1},q=[a];
+  while(q.length){const u=q.shift();if(u===g)break;ADJ[u].forEach(v=>{if(!(v in prev)){prev[v]=u;q.push(v)}})}
+  const ns=[];for(let u=g;u!==-1;u=prev[u])ns.unshift(u);
+  return ns.map(i=>NODES[i]).concat([[STN[s][0],STN[s][1]]]);
+}
+function pickGoal(p){
+  let s;
+  if(p.role==='crew'){const l=p.tk.filter(t=>!p.dn.includes(t));s=l.length?l[Math.random()*l.length|0]:(Math.random()*8|0)}
+  else{
+    const cs=pl.filter(q=>q.alive&&q.role==='crew');
+    if(cs.length&&Math.random()<.7){const c=cs[Math.random()*cs.length|0];s=0;STN.forEach((t,i)=>{if(Math.hypot(t[0]-c.x,t[1]-c.y)<Math.hypot(STN[s][0]-c.x,STN[s][1]-c.y))s=i})}
+    else s=Math.random()*8|0;
+  }
+  p.goal=s;p.path=route(p.x,p.y,s);
+}
+function botAI(p,i,dt){
+  if(!p.alive){p.dx=p.dy=0;return}
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  if(p.role==='crew'&&bodies.some(b=>Math.hypot(b[0]-p.x,b[1]-p.y)<90)){doRep(i);return}
+  if(p.role==='imp'&&p.cd<=0){
+    const t=pl.find((q,j)=>j!==i&&q.alive&&q.role==='crew'&&dist(q,p)<55);
+    if(t&&!pl.some(q=>q!==p&&q!==t&&q.alive&&dist(q,p)<170)&&Math.random()<.4)doKill(i);
+  }
+  if(p.work>0){p.dx=p.dy=0;p.work-=dt;if(p.work<=0){if(p.role==='crew')doDone(i,p.goal);p.path=null}return}
+  if(!p.path||!p.path.length)pickGoal(p);
+  const w=p.path[0],d=Math.hypot(w[0]-p.x,w[1]-p.y);
+  if(d<10){p.path.shift();if(!p.path.length){p.dx=p.dy=0;p.work=p.role==='crew'?6:2}}
+  else{p.dx=(w[0]-p.x)/d;p.dy=(w[1]-p.y)/d}
+}
+function botVote(p){
+  const c=[];pl.forEach((q,j)=>{if(q.alive&&q!==p&&(p.role==='crew'||q.role==='crew'))c.push(j)});
+  p.vote=(Math.random()<.5||!c.length)?-1:c[Math.random()*c.length|0];
+}
+let tickOn=false;
+function startTick(){if(!tickOn){tickOn=true;setInterval(tick,50)}}
+function addBot(){if(pl.length>=8)return;const b=mk('CPU'+(pl.filter(p=>p.bot).length+1),null);b.bot=1;pl.push(b)}
+function solo(){
+  isHost=true;me=0;pl=[mk($('nm').value.trim()||'あなた',null)];
+  for(let k=0;k<4;k++)addBot();
+  names=pl.map(p=>p.n);$('code').textContent='CPU対戦';startTick();startGame();
 }
 function toLobby(){hph='lobby';pl.forEach(p=>{p.alive=true});lobbyMsg()}
 
@@ -315,7 +367,8 @@ function lobbyUI(){
   if(uiPh!=='lobby')show('lobby');
   $('plist').innerHTML=names.map((n,i)=>'<div style="color:'+COL[i%8]+'">● '+esc(n)+(i===0?'（ホスト）':'')+'</div>').join('');
   $('start').style.display=isHost&&names.length>=3?'block':'none';
-  $('wait').textContent=isHost?(names.length<3?'3人以上で開始できます':''):'ホストの開始を待っています';
+  $('cpus').style.display=isHost?'block':'none';
+  $('wait').textContent=isHost?(names.length<3?'3人以上で開始できます（CPUを追加できます）':''):'ホストの開始を待っています';
 }
 function apply(s){
   const u={play:'game',meet:'meet'}[s.ph];
@@ -438,6 +491,9 @@ $('go1').onclick=()=>$('play').scrollIntoView({behavior:'smooth'});
 $('mkb').onclick=hostRoom;
 $('jnb').onclick=()=>{if(/^\d{4}$/.test($('cin').value.trim()))joinRoom();else alert('4桁の番号を入れてください')};
 $('start').onclick=startGame;
+$('solob').onclick=solo;
+$('addcpu').onclick=()=>{addBot();lobbyMsg()};
+$('delcpu').onclick=()=>{for(let i=pl.length-1;i>0;i--){if(pl[i].bot){pl.splice(i,1);break}}lobbyMsg()};
 $('back').onclick=toLobby;
 $('bk').onclick=()=>isHost?doKill(0):hc.send({t:'kill'});
 $('br').onclick=()=>isHost?doRep(0):hc.send({t:'rep'});
