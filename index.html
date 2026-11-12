@@ -10,6 +10,7 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:600 16px/1.5 system-ui,"Hiragino Sans","Yu Gothic",sans-serif;overflow:hidden}
 .scr{display:none;position:absolute;inset:0;padding:20px;overflow:auto;max-width:480px;margin:0 auto}
 .scr.on{display:block}
+#home{padding-bottom:40px}
 #game.on{max-width:none;padding:0;overflow:hidden}
 h1{font-size:32px;margin:28px 0 6px;line-height:1.2}
 .sub{color:var(--sub);font-size:14px;margin:0 0 12px}
@@ -27,24 +28,105 @@ button:disabled{opacity:.4}
 #bar{height:100%;width:0;background:var(--ok)}
 #rl{top:30px;left:12px;font-size:14px;padding:4px 10px;border-radius:8px;background:var(--card)}
 #zn{top:30px;right:12px;font-size:14px;color:var(--sub)}
-#mg{top:64px;left:0;right:0;text-align:center;font-size:18px;text-shadow:0 2px 6px #000}
+#mg{top:38%;left:0;right:0;text-align:center;font-size:18px;text-shadow:0 2px 6px #000}
 #dead{bottom:20px;left:0;right:0;text-align:center;color:var(--sub);display:none}
 .gb{position:absolute;right:16px;width:92px;height:92px;border-radius:50%;padding:0;margin:0;font-size:16px;width:92px}
 #br{bottom:24px;background:#3d7bd9}
-#bk{bottom:128px}
+#bk{bottom:232px}#bu{bottom:128px;background:var(--ok);color:#06241a;display:none}
 #jb{position:absolute;width:100px;height:100px;border:3px solid rgba(255,255,255,.35);border-radius:50%;display:none;pointer-events:none}
+#tl{top:62px;left:12px;font-size:13px;background:rgba(15,26,38,.75);border-radius:8px;padding:6px 10px;line-height:1.6}
+#tl .dn{color:var(--ok);text-decoration:line-through}
+#intro{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;z-index:5;padding:20px}
+#mini{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:4;padding:20px}
+#mini .card{width:100%;max-width:340px}
+#mg2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+#mg2 button{font-size:28px;padding:18px 0;margin:0}
 .big{font-size:22px;text-align:center;margin:14px 0}
+.hero{text-align:center;padding:8px 0 4px}
+.tag{display:inline-block;font-size:12px;color:var(--ok);border:1px solid var(--ok);border-radius:20px;padding:3px 12px;margin-top:10px}
+.hero h1{font-size:44px;line-height:1.15;margin:14px 0 8px;font-weight:900}
+.hero h1 span{color:var(--acc)}
+.lead{font-size:17px;margin:0 0 14px}
+.hero svg{width:100%;height:auto;display:block;margin:6px 0}
+h2{font-size:22px;margin:36px 0 10px}
+.two,.three{display:grid;gap:10px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr}
+.two .card{margin:0}.two p{margin:6px 0 0;font-size:14px;font-weight:500}
+.c1 b{color:var(--ok);font-size:18px}.c2 b{color:var(--acc);font-size:18px}
+.steps{list-style:none;counter-reset:n;padding:0;margin:0}
+.steps li{counter-increment:n;background:var(--card);border-radius:14px;padding:12px 14px 12px 56px;margin:8px 0;position:relative;font-size:14px;font-weight:500}
+.steps li:before{content:counter(n);position:absolute;left:14px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;font-weight:800;text-align:center;line-height:30px}
+.steps b{display:block;font-size:16px}
+.three .card{margin:0;font-size:14px;font-weight:500}
+.num{display:block;font-size:28px;font-weight:900;color:var(--ok);line-height:1.2}
+.hr{border:0;border-top:1px solid #2a4058;margin:18px 0}
+details{background:var(--card);border-radius:12px;padding:12px 14px;margin:8px 0}
+summary{cursor:pointer;font-weight:700}
+details p{margin:8px 0 0;font-size:14px;font-weight:500;color:var(--sub)}
+
 </style>
 </head>
 <body>
 
 <div class="scr on" id="home">
-<h1>基地の裏切り者</h1>
-<p class="sub">3〜8人で遊ぶ、スマホ対戦の正体隠匿アクション。アカウントは不要です。</p>
-<div class="card"><label>名前</label><input id="nm" maxlength="8" placeholder="例：たなか"></div>
-<button id="mkb">部屋を作る</button>
-<div class="card"><label>部屋の番号（4桁）</label><input id="cin" inputmode="numeric" maxlength="4" placeholder="1234"><button class="alt" id="jnb">入室する</button></div>
-<p class="sub">ルール：市民は光る場所に立ってタスクを完了、うらぎり者は市民を倒す。遺体を見つけたら通報して、話し合いと投票で追放しよう。</p>
+<div class="hero">
+<div class="tag">3〜8人 ／ スマホ対戦 ／ アカウント不要</div>
+<h1>基地の<br><span>裏切り者</span></h1>
+<p class="lead">この中に、うらぎり者がいる。<br>動いて、疑って、追放しろ。</p>
+<svg viewBox="0 0 300 180" role="img" aria-label="暗い基地の中を、円形の視界で探索するゲーム画面のイメージ">
+<defs><radialGradient id="lg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#3a5878"/><stop offset="1" stop-color="#0b121b"/></radialGradient></defs>
+<rect width="300" height="180" rx="14" fill="#0b121b"/>
+<circle cx="120" cy="95" r="82" fill="url(#lg)"/>
+<circle cx="95" cy="70" r="9" fill="#f2b134"/><circle cx="95" cy="70" r="14" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="40 100"/>
+<circle cx="120" cy="105" r="10" fill="#17a2b8" stroke="#fff" stroke-width="2.5"/>
+<circle cx="165" cy="85" r="10" fill="#7bc950"/>
+<path d="M82 122l16 16M98 122L82 138" stroke="#e4572e" stroke-width="5" stroke-linecap="round"/>
+<circle cx="238" cy="60" r="10" fill="#a06cd5" opacity=".25"/>
+<text x="120" y="130" fill="#fff" font-size="9" text-anchor="middle" font-weight="700">あなた</text>
+<text x="165" y="109" fill="#fff" font-size="9" text-anchor="middle" font-weight="700">さとう</text>
+</svg>
+<p class="sub">見えるのは、自分のまわりだけ。</p>
+<button id="go1">さっそく遊ぶ</button>
+</div>
+
+<h2>2つの陣営</h2>
+<div class="two">
+<div class="card c1"><b>市民</b><p>それぞれに割り当てられたタスクを、みんなで全部終わらせれば勝ち。うらぎり者を見つけて追放してもOK。</p></div>
+<div class="card c2"><b>うらぎり者</b><p>こっそり市民を倒していく。生き残りが同数になれば勝ち。</p></div>
+</div>
+
+<h2>遊び方</h2>
+<ol class="steps">
+<li><b>集まる</b>1人が部屋を作ると4桁の番号が出る。みんなで番号を入れて入室。</li>
+<li><b>役割が配られる</b>自分の画面にだけ出る。人には見せない。</li>
+<li><b>動く</b>左側をドラッグして移動。黄色い「！」の場所で「使う」を押してタスクをこなす。うらぎり者は近づいて倒す。</li>
+<li><b>通報する</b>遺体を見つけたら通報。全員が集まって会議が始まる。</li>
+<li><b>話して、投票</b>「3番の部屋にいた」など、口で言い合って怪しい人を追放。</li>
+</ol>
+
+<h2>こんなゲーム</h2>
+<div class="three">
+<div class="card"><span class="num">3〜8</span>人で対戦。<br>6人以上はうらぎり者が2人</div>
+<div class="card"><span class="num">4桁</span>の番号で入室。<br>アカウントも登録も不要</div>
+<div class="card"><span class="num">3〜5分</span>で1ゲーム。<br>休み時間にちょうどいい</div>
+</div>
+
+<section id="play" class="card">
+<h2 style="margin-top:0">さっそく遊ぶ</h2>
+<label for="nm">名前</label><input id="nm" maxlength="8" placeholder="例：たなか">
+<button id="mkb">部屋を作る（ホスト）</button>
+<p class="sub" style="text-align:center;margin:8px 0 0">ホストは画面を閉じないでください</p>
+<hr class="hr">
+<label for="cin">部屋の番号（4桁）</label><input id="cin" inputmode="numeric" maxlength="4" placeholder="1234">
+<button class="alt" id="jnb">入室する</button>
+</section>
+
+<h2>よくある質問</h2>
+<details><summary>アカウントは必要ですか？</summary><p>いりません。URLを開いて、名前と番号を入れるだけです。</p></details>
+<details><summary>何人で遊べますか？</summary><p>3〜8人です。6人以上だと、うらぎり者が2人になります。</p></details>
+<details><summary>ホストが画面を閉じたら？</summary><p>ゲームは終わります。ホストは、閉じたりスリープしたりしないようにしてください。</p></details>
+<details><summary>入室できないときは？</summary><p>番号が合っているか確認してください。LINEなどのアプリ内ではなく、SafariやChromeで開くのがおすすめです。ゲームが始まった後は入室できません。</p></details>
+<details><summary>操作方法は？</summary><p>スマホは画面の左側をドラッグして移動します。PCはWASDか矢印キーです。</p></details>
+<p class="sub" style="text-align:center;margin:28px 0 12px">基地の裏切り者</p>
 </div>
 
 <div class="scr" id="lobby">
@@ -60,7 +142,8 @@ button:disabled{opacity:.4}
 <div class="hud" id="barw"><div id="bar"></div></div>
 <div class="hud" id="rl"></div><div class="hud" id="zn"></div><div class="hud" id="mg"></div><div class="hud" id="dead">倒されました。観戦中です</div>
 <div id="jb"></div>
-<button class="gb" id="br">通報</button><button class="gb" id="bk">倒す</button>
+<div class="hud" id="tl"></div><div id="intro"></div><div id="mini"><div class="card"><p id="mt2" class="big" style="font-size:16px"></p><div id="mg2"></div><button class="alt" id="mx">やめる</button></div></div>
+<button class="gb" id="br">通報</button><button class="gb" id="bu">使う</button><button class="gb" id="bk">倒す</button>
 </div>
 
 <div class="scr" id="meet">
@@ -77,19 +160,24 @@ button:disabled{opacity:.4}
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
-const $=i=>document.getElementById(i),W=900,H=600,R=190,SP=150;
+const $=i=>document.getElementById(i),W=1200,H=800,R=190,SP=150;
 const COL=['#e4572e','#17a2b8','#f2b134','#7bc950','#a06cd5','#ff8fab','#4d6fff','#c9a27a'];
-const STN=[[150,150],[450,150],[750,150],[150,450],[450,450],[750,450]];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RM=[[40,40,260,200],[400,40,400,260],[900,40,260,200],[40,520,260,240],[440,520,320,240],[900,520,260,240],[270,110,160,60],[770,110,160,60],[130,210,60,340],[1010,210,60,340],[570,270,60,280],[270,610,200,60],[730,610,200,60]];
+const ROOMS=[['倉庫',40,40],['食堂',400,40],['操縦室',900,40],['電気室',40,520],['動力室',440,520],['通信室',900,520]];
+const STN=[[150,130,'倉庫','配線を直す'],[250,190,'倉庫','データを集める'],[470,100,'食堂','ゴミを捨てる'],[740,230,'食堂','カードを通す'],[1030,130,'操縦室','進路を合わせる'],[100,620,'電気室','電源を入れる'],[640,650,'動力室','燃料を入れる'],[1030,640,'通信室','データを送る']];
+const EMG=[600,170];
+const inMap=(x,y)=>RM.some(r=>x>=r[0]+12&&x<=r[0]+r[2]-12&&y>=r[1]+12&&y<=r[1]+r[3]-12);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let peer,hc=null,isHost=false,me=0,role='crew',uiPh='home',hph='lobby';
-let pl=[],names=[],S=null,disp=[],pr=[0,0,0,0,0,0],bodies=[],tm=0,msg='',msgT=0,key={},jv={x:0,y:0},joy=null,loop=false;
+let pl=[],names=[],S=null,disp=[],bodies=[],tm=0,msg='',msgT=0,key={},jv={x:0,y:0},joy=null,loop=false;
+let tasks=[],myDone=[],mates=[],emUsed=false,tdone=0,ttot=1,curNear=-1;
 function show(id){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id===id));uiPh=id}
 function inp(){const k=(a,b)=>(key[a]?1:0)-(key[b]?1:0);return{x:k('d','a')+k('ArrowRight','ArrowLeft')+jv.x,y:k('s','w')+k('ArrowDown','ArrowUp')+jv.y}}
-addEventListener('keydown',e=>key[e.key.toLowerCase()==='arrowup'?'ArrowUp':e.key.length===1?e.key.toLowerCase():e.key]=1);
-addEventListener('keyup',e=>key[e.key.toLowerCase()==='arrowup'?'ArrowUp':e.key.length===1?e.key.toLowerCase():e.key]=0);
+const kn=e=>e.key.length===1?e.key.toLowerCase():e.key;
+addEventListener('keydown',e=>key[kn(e)]=1);addEventListener('keyup',e=>key[kn(e)]=0);
 
 /* ---------- ホスト(審判) ---------- */
-const mk=(n,c)=>({n,x:450,y:300,alive:true,role:'crew',conn:c,dx:0,dy:0,vote:null,cd:0});
+const mk=(n,c)=>({n,x:600,y:200,alive:true,role:'crew',conn:c,dx:0,dy:0,vote:null,cd:0,tk:[],dn:[],em:0});
 const sendAll=m=>pl.forEach(p=>p.conn&&p.conn.open&&p.conn.send(m));
 function hostRoom(){
   if(typeof Peer==='undefined'){alert('通信部品（PeerJS）を読み込めませんでした。アプリ内のプレビューではなく、ネット上に置いたURLで開いてください。');return}
@@ -114,21 +202,25 @@ function hd(c,d){
   if(d.t==='i'){p.dx=+d.x||0;p.dy=+d.y||0}
   else if(d.t==='kill')doKill(i);
   else if(d.t==='rep')doRep(i);
+  else if(d.t==='emg')doEmg(i);
+  else if(d.t==='done')doDone(i,+d.s);
   else if(d.t==='vote'&&hph==='meet'&&p.alive)p.vote=+d.v;
 }
 function drop(c){
   const i=pl.findIndex(p=>p.conn===c);if(i<0)return;
   if(hph==='lobby'){pl.splice(i,1);lobbyMsg()}else{pl[i].alive=false;pl[i].conn=null;pl[i].vote=null}
 }
-function place(){pl.forEach((p,i)=>{const a=i/pl.length*6.283;p.x=450+Math.cos(a)*70;p.y=300+Math.sin(a)*70;p.dx=p.dy=0})}
+function place(){pl.forEach((p,i)=>{const a=i/pl.length*6.283;p.x=600+Math.cos(a)*70;p.y=190+Math.sin(a)*60;p.dx=p.dy=0})}
 function startGame(){
   const k=pl.length>=6?2:1,ix=pl.map((_,i)=>i).sort(()=>Math.random()-.5);
-  pl.forEach(p=>{p.role='crew';p.alive=true;p.vote=null;p.cd=5});
+  pl.forEach(p=>{p.role='crew';p.alive=true;p.vote=null;p.cd=5;p.dn=[];p.em=0;p.tk=[0,1,2,3,4,5,6,7].sort(()=>Math.random()-.5).slice(0,3)});
   ix.slice(0,k).forEach(i=>pl[i].role='imp');
-  pr=[0,0,0,0,0,0];bodies=[];msg='';msgT=0;place();hph='play';
-  pl.forEach(p=>p.conn&&p.conn.send({t:'r',role:p.role}));
-  role=pl[0].role;S=null;disp=[];show('game');enterGame();
+  ttot=pl.filter(p=>p.role==='crew').length*3;tdone=0;bodies=[];msg='';msgT=0;place();hph='play';
+  const rm=p=>({t:'r',role:p.role,tk:p.tk,mates:p.role==='imp'?pl.filter(q=>q.role==='imp'&&q!==p).map(q=>q.n):[]});
+  pl.forEach(p=>p.conn&&p.conn.send(rm(p)));
+  show('game');setRole(rm(pl[0]));enterGame();
 }
+function setRole(m){role=m.role;tasks=m.tk;mates=m.mates;myDone=[];emUsed=false;S=null;disp=[];renderTasks();intro()}
 function doKill(i){
   const p=pl[i];if(hph!=='play'||!p||!p.alive||p.role!=='imp'||p.cd>0)return;
   let b=null,bd=60;
@@ -136,10 +228,21 @@ function doKill(i){
   if(b===null)return;
   pl[b].alive=false;bodies.push([Math.round(pl[b].x),Math.round(pl[b].y),b]);p.cd=8;
 }
+function startMeet(m){hph='meet';tm=40;bodies=[];pl.forEach(q=>q.vote=null);place();msg=m;msgT=3}
 function doRep(i){
   const p=pl[i];if(hph!=='play'||!p||!p.alive)return;
   if(!bodies.some(b=>Math.hypot(b[0]-p.x,b[1]-p.y)<90))return;
-  hph='meet';tm=40;bodies=[];pl.forEach(q=>q.vote=null);place();msg=p.n+'さんが遺体を発見しました';msgT=3;
+  startMeet(p.n+'さんが遺体を発見しました');
+}
+function doEmg(i){
+  const p=pl[i];if(hph!=='play'||!p||!p.alive||p.em>0||Math.hypot(p.x-EMG[0],p.y-EMG[1])>70)return;
+  p.em=1;startMeet(p.n+'さんが緊急会議を開きました');
+}
+function doDone(i,s){
+  const p=pl[i];if(hph!=='play'||!p||p.role!=='crew'||!p.tk.includes(s)||p.dn.includes(s))return;
+  if(!STN[s]||Math.hypot(p.x-STN[s][0],p.y-STN[s][1])>80)return;
+  p.dn.push(s);tdone++;
+  if(i===0){myDone=p.dn.slice();renderTasks()}else if(p.conn)p.conn.send({t:'td',dn:p.dn});
 }
 function endMeet(){
   const cnt={};pl.forEach(p=>{if(p.alive&&p.vote!==null&&p.vote>=0)cnt[p.vote]=(cnt[p.vote]||0)+1});
@@ -153,7 +256,7 @@ function endMeet(){
 }
 function win(){
   const c=pl.filter(p=>p.alive&&p.role==='crew').length,m=pl.filter(p=>p.alive&&p.role==='imp').length;
-  let w=null;if(m===0||pr.every(v=>v>=1))w='crew';else if(c<=m)w='imp';
+  let w=null;if(m===0||tdone>=ttot)w='crew';else if(c<=m)w='imp';
   if(w){hph='end';const e={t:'end',win:w,roles:pl.map(p=>p.role)};sendAll(e);endUI(e)}
   return w;
 }
@@ -164,13 +267,12 @@ function tick(){
   if(hph==='play'){
     pl.forEach(p=>{
       const l=Math.hypot(p.dx,p.dy);
-      if(l>0){const f=Math.min(1,l)*SP*dt/l;p.x=Math.max(10,Math.min(W-10,p.x+p.dx*f));p.y=Math.max(10,Math.min(H-10,p.y+p.dy*f))}
+      if(l>0){
+        const f=Math.min(1,l)*SP*dt/l,nx=p.x+p.dx*f,ny=p.y+p.dy*f;
+        if(!p.alive){p.x=Math.max(15,Math.min(W-15,nx));p.y=Math.max(15,Math.min(H-15,ny))}
+        else{if(inMap(nx,p.y))p.x=nx;if(inMap(p.x,ny))p.y=ny}
+      }
       p.cd=Math.max(0,p.cd-dt);
-    });
-    STN.forEach((s,i)=>{
-      if(pr[i]>=1)return;
-      const near=pl.some(p=>p.alive&&p.role==='crew'&&Math.hypot(p.x-s[0],p.y-s[1])<45);
-      pr[i]=near?Math.min(1,pr[i]+dt/4):Math.max(0,pr[i]-dt/3);
     });
     if(win())return;
   }else if(hph==='meet'){
@@ -179,7 +281,7 @@ function tick(){
     if(hph==='end')return;
   }
   if(msgT>0)msgT-=dt;
-  const s={t:'s',ph:hph,ps:pl.map(p=>[Math.round(p.x),Math.round(p.y),p.alive?1:0]),bd:bodies,pr:pr.map(v=>Math.round(v*100)/100),tm:Math.ceil(tm),cd:pl.map(p=>Math.ceil(p.cd)),msg:msgT>0?msg:''};
+  const s={t:'s',ph:hph,ps:pl.map(p=>[Math.round(p.x),Math.round(p.y),p.alive?1:0]),bd:bodies,pg:ttot?tdone/ttot:0,tm:Math.ceil(tm),cd:pl.map(p=>Math.ceil(p.cd)),msg:msgT>0?msg:''};
   sendAll(s);apply(s);
 }
 function toLobby(){hph='lobby';pl.forEach(p=>{p.alive=true});lobbyMsg()}
@@ -202,7 +304,8 @@ function gd(d){
   if(d.t==='ok')me=d.id;
   else if(d.t==='no'){alert('入室できません（ゲーム中か満員です）');location.reload()}
   else if(d.t==='l'){names=d.names;lobbyUI()}
-  else if(d.t==='r'){role=d.role;S=null;disp=[]}
+  else if(d.t==='r')setRole(d);
+  else if(d.t==='td'){myDone=d.dn;renderTasks()}
   else if(d.t==='s')apply(d);
   else if(d.t==='end')endUI(d);
 }
@@ -218,8 +321,17 @@ function apply(s){
   const u={play:'game',meet:'meet'}[s.ph];
   if(u&&uiPh!==u){show(u);if(u==='game')enterGame();else{S=s;enterMeet()}}
   S=s;
-  s.ps.forEach((p,i)=>{if(!disp[i])disp[i]={x:p[0],y:p[1]}});
+  s.ps.forEach((p,i)=>{if(!disp[i])disp[i]={x:p[0],y:p[1],f:1}});
   if(uiPh==='meet'){$('mt').textContent='残り '+s.tm+' 秒';$('mm').textContent=s.msg}
+}
+function renderTasks(){
+  $('tl').innerHTML='<b>タスク</b>'+tasks.map(s=>{const d=myDone.includes(s);return'<div class="'+(d?'dn':'')+'">'+(d?'✔':'☐')+' '+STN[s][2]+'：'+STN[s][3]+'</div>'}).join('');
+}
+function intro(){
+  const e=$('intro');
+  e.style.background=role==='imp'?'rgba(120,20,10,.93)':'rgba(10,40,70,.93)';
+  e.innerHTML='<div><div style="font-size:16px">あなたは</div><div style="font-size:48px;font-weight:900">'+(role==='imp'?'うらぎり者':'市民')+'</div>'+(role==='imp'&&mates.length?'<div style="margin-top:8px">仲間：'+mates.map(esc).join('、')+'</div>':'')+'<div style="margin-top:8px;font-size:14px">'+(role==='imp'?'こっそり市民を倒そう':'タスクを終わらせて、うらぎり者を見つけよう')+'</div></div>';
+  e.style.display='flex';setTimeout(()=>e.style.display='none',3000);
 }
 function enterGame(){
   $('rl').textContent=role==='imp'?'あなたは「うらぎり者」':'あなたは「市民」';
@@ -228,7 +340,7 @@ function enterGame(){
   if(!loop){loop=true;rs();frame()}
 }
 function enterMeet(){
-  $('vl').innerHTML='';
+  $('mini').style.display='none';$('vl').innerHTML='';
   if(!S||!S.ps[me]||!S.ps[me][2]){$('vl').innerHTML='<p class="sub">あなたは投票できません。議論を見守りましょう。</p>';return}
   S.ps.forEach((p,i)=>{if(p[2]&&i!==me){const b=document.createElement('button');b.className='alt';b.textContent=names[i];b.style.borderColor=COL[i%8];b.onclick=()=>vote(i,b);$('vl').appendChild(b)}});
   const k=document.createElement('button');k.className='alt';k.textContent='スキップ';k.onclick=()=>vote(-1,k);$('vl').appendChild(k);
@@ -245,52 +357,92 @@ function endUI(e){
   $('ewait').textContent=isHost?'':'ホストがロビーに戻すのを待っています';
 }
 
+/* ---------- タスク ---------- */
+function openMini(s){
+  const m=$('mini'),g=$('mg2');let nx=1;
+  $('mt2').textContent=STN[s][3]+'：1から順にタップ';g.innerHTML='';
+  [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-.5).forEach(n=>{
+    const b=document.createElement('button');b.textContent=n;b.className='alt';
+    b.onclick=()=>{
+      if(n===nx){b.disabled=true;b.className='sel';nx++;if(nx>9){m.style.display='none';finish(s)}}
+      else{nx=1;g.querySelectorAll('button').forEach(x=>{x.disabled=false;x.className='alt'})}
+    };
+    g.appendChild(b);
+  });
+  m.style.display='flex';
+}
+function finish(s){
+  if(role==='imp'){myDone.push(s);renderTasks();return}
+  if(isHost)doDone(0,s);else hc.send({t:'done',s});
+}
+
 /* ---------- 描画・入力 ---------- */
 const cv=$('cv'),cx=cv.getContext('2d');
+if(!cx.roundRect)cx.roundRect=function(x,y,w,h){this.rect(x,y,w,h)};
 function rs(){cv.width=cv.clientWidth;cv.height=cv.clientHeight}
 addEventListener('resize',rs);
 cv.addEventListener('pointerdown',e=>{if(joy)return;joy={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);const b=$('jb');b.style.display='block';b.style.left=(e.clientX-50)+'px';b.style.top=(e.clientY-50)+'px'});
 cv.addEventListener('pointermove',e=>{if(!joy||e.pointerId!==joy.id)return;let x=(e.clientX-joy.x)/45,y=(e.clientY-joy.y)/45;const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}jv={x,y}});
 const up=e=>{if(joy&&e.pointerId===joy.id){joy=null;jv={x:0,y:0};$('jb').style.display='none'}};
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+function bean(x,y,c,f){
+  cx.fillStyle='rgba(0,0,0,.3)';cx.beginPath();cx.ellipse(x,y+16,13,5,0,0,6.283);cx.fill();
+  cx.fillStyle=c;
+  cx.beginPath();cx.roundRect(x-f*17,y-6,9,18,4);cx.fill();
+  cx.beginPath();cx.roundRect(x-11,y-18,22,33,10);cx.fill();
+  cx.fillStyle='rgba(0,0,0,.18)';cx.fillRect(x-11,y+6,22,2);cx.fillRect(x-1,y+8,2,7);
+  cx.fillStyle='#bfe6f2';cx.beginPath();cx.roundRect(x+f*5-9,y-13,18,11,5);cx.fill();
+  cx.fillStyle='rgba(255,255,255,.7)';cx.beginPath();cx.roundRect(x+f*5-6,y-11,8,3,2);cx.fill();
+}
 function frame(){
   requestAnimationFrame(frame);
   if(uiPh!=='game'||!S||!S.ps[me])return;
   if(cv.width!==cv.clientWidth)rs();
-  S.ps.forEach((p,i)=>{const d=disp[i];if(d){d.x+=(p[0]-d.x)*.4;d.y+=(p[1]-d.y)*.4}});
+  S.ps.forEach((p,i)=>{const d=disp[i];if(d){const dx=p[0]-d.x;if(Math.abs(dx)>.8)d.f=dx>0?1:-1;d.x+=dx*.4;d.y+=(p[1]-d.y)*.4}});
   const w=cv.width,h=cv.height,sc=Math.min(w,h)/430,m=disp[me],alive=S.ps[me][2]===1;
-  cx.fillStyle='#0b121b';cx.fillRect(0,0,w,h);
+  cx.fillStyle='#070c13';cx.fillRect(0,0,w,h);
   cx.save();cx.translate(w/2-m.x*sc,h/2-m.y*sc);cx.scale(sc,sc);
-  for(let i=0;i<6;i++){const zx=(i%3)*300,zy=(i/3|0)*300;cx.fillStyle=i%2?'#16283a':'#1b3147';cx.fillRect(zx,zy,300,300);cx.fillStyle='rgba(255,255,255,.07)';cx.font='bold 120px system-ui';cx.textAlign='center';cx.fillText(i+1,zx+150,zy+185)}
-  cx.strokeStyle='#5d7a99';cx.lineWidth=4;cx.strokeRect(0,0,W,H);
-  STN.forEach((s,i)=>{const v=S.pr[i];cx.beginPath();cx.arc(s[0],s[1],17,0,6.283);cx.fillStyle=v>=1?'#4ed1a1':'#f2b134';cx.fill();if(v>0&&v<1){cx.beginPath();cx.arc(s[0],s[1],25,-1.57,-1.57+6.283*v);cx.strokeStyle='#fff';cx.lineWidth=5;cx.stroke()}});
-  S.bd.forEach(b=>{cx.strokeStyle=COL[b[2]%8];cx.lineWidth=7;cx.beginPath();cx.moveTo(b[0]-12,b[1]-12);cx.lineTo(b[0]+12,b[1]+12);cx.moveTo(b[0]+12,b[1]-12);cx.lineTo(b[0]-12,b[1]+12);cx.stroke()});
+  cx.strokeStyle='#5d7a99';cx.lineWidth=16;cx.lineJoin='round';
+  RM.forEach(r=>cx.strokeRect(r[0],r[1],r[2],r[3]));
+  cx.fillStyle='#22364b';RM.forEach(r=>cx.fillRect(r[0],r[1],r[2],r[3]));
+  cx.fillStyle='rgba(255,255,255,.12)';cx.font='bold 22px system-ui';cx.textAlign='left';
+  ROOMS.forEach(r=>cx.fillText(r[0],r[1]+16,r[2]+34));
+  STN.forEach((s,i)=>{cx.fillStyle='#3c566f';cx.fillRect(s[0]-12,s[1]-10,24,20);cx.fillStyle='#6f93b5';cx.fillRect(s[0]-8,s[1]-6,16,6)});
+  cx.beginPath();cx.arc(EMG[0],EMG[1],17,0,6.283);cx.fillStyle='#b3261e';cx.fill();cx.strokeStyle='#e8eef4';cx.lineWidth=4;cx.stroke();
+  tasks.forEach(t=>{if(myDone.includes(t))return;const s=STN[t];cx.beginPath();cx.arc(s[0],s[1]-30,11,0,6.283);cx.fillStyle='#f2b134';cx.fill();cx.fillStyle='#1b2430';cx.font='bold 16px system-ui';cx.textAlign='center';cx.fillText('!',s[0],s[1]-24)});
+  S.bd.forEach(b=>{cx.save();cx.translate(b[0],b[1]);cx.rotate(1.57);bean(0,0,COL[b[2]%8],1);cx.restore()});
   S.ps.forEach((p,i)=>{
     const d=disp[i];if(!d)return;
-    if(i!==me){if(alive&&(!p[2]||Math.hypot(d.x-m.x,d.y-m.y)>R))return}
+    if(i!==me&&alive&&(!p[2]||Math.hypot(d.x-m.x,d.y-m.y)>R))return;
     cx.globalAlpha=p[2]?1:.4;
-    cx.beginPath();cx.arc(d.x,d.y,15,0,6.283);cx.fillStyle=COL[i%8];cx.fill();
-    if(i===me){cx.strokeStyle='#fff';cx.lineWidth=3;cx.stroke()}
-    cx.fillStyle='#fff';cx.font='bold 13px system-ui';cx.textAlign='center';cx.fillText(names[i]||'',d.x,d.y+30);
+    bean(d.x,d.y,COL[i%8],d.f);
+    cx.fillStyle='#fff';cx.font='bold 13px system-ui';cx.textAlign='center';cx.fillText(names[i]||'',d.x,d.y+34);
     cx.globalAlpha=1;
   });
   cx.restore();
   if(alive){cx.beginPath();cx.rect(0,0,w,h);cx.arc(w/2,h/2,R*sc,0,6.283);cx.fillStyle='rgba(4,7,12,.95)';cx.fill('evenodd')}
-  $('bar').style.width=(S.pr.reduce((a,b)=>a+b,0)/6*100)+'%';
-  $('zn').textContent='いまの場所：'+(Math.min(2,m.x/300|0)+3*Math.min(1,m.y/300|0)+1)+'番の部屋';
+  $('bar').style.width=(S.pg*100)+'%';
+  const zi=RM.slice(0,6).findIndex(r=>m.x>=r[0]&&m.x<=r[0]+r[2]&&m.y>=r[1]&&m.y<=r[1]+r[3]),zr=zi>=0?ROOMS[zi]:null;
+  $('zn').textContent='いまの場所：'+(zr?zr[0]:'通路');
   $('mg').textContent=S.msg||'';
   $('dead').style.display=alive?'none':'block';
   $('br').style.display=alive?'block':'none';
   if(role==='imp'){$('bk').style.display=alive?'block':'none';const c=S.cd[me];$('bk').textContent=c>0?'倒す '+c:'倒す';$('bk').style.opacity=c>0?.4:1}
+  curNear=-1;tasks.forEach(t=>{if(!myDone.includes(t)&&Math.hypot(m.x-STN[t][0],m.y-STN[t][1])<50)curNear=t});
+  const ne=alive&&!emUsed&&Math.hypot(m.x-EMG[0],m.y-EMG[1])<50;
+  $('bu').style.display=(curNear>=0||ne)?'block':'none';
 }
 
 /* ---------- ボタン ---------- */
+$('go1').onclick=()=>$('play').scrollIntoView({behavior:'smooth'});
 $('mkb').onclick=hostRoom;
 $('jnb').onclick=()=>{if(/^\d{4}$/.test($('cin').value.trim()))joinRoom();else alert('4桁の番号を入れてください')};
 $('start').onclick=startGame;
 $('back').onclick=toLobby;
 $('bk').onclick=()=>isHost?doKill(0):hc.send({t:'kill'});
 $('br').onclick=()=>isHost?doRep(0):hc.send({t:'rep'});
+$('bu').onclick=()=>{if(curNear>=0){openMini(curNear)}else{emUsed=true;isHost?doEmg(0):hc.send({t:'emg'})}};
+$('mx').onclick=()=>$('mini').style.display='none';
 </script>
 </body>
 </html>
